@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FortitudeAsiaC#")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+75c00d4744ee47838cdafedc8cf8667e967d0773")]
 [assembly: System.Reflection.AssemblyProductAttribute("FortitudeAsiaC#")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FortitudeAsiaC#")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
