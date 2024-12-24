@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "PEr/o09Kqx0=",
+  "success": true,
+  "projectFilePath": "/Users/cavenfoo/dev/dotnet/FortitudeAsiaC#/FortitudeAsiaC#.csproj",
+  "expectedPackageFiles": [
+    "/Users/cavenfoo/.nuget/packages/microsoft.aspnetcore.openapi/9.0.0/microsoft.aspnetcore.openapi.9.0.0.nupkg.sha512",
+    "/Users/cavenfoo/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
