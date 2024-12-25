@@ -26,8 +26,8 @@ namespace api.Controllers
                 if (!_transactionService.ValidateTransaction(request, out errorMessage)) {
                     return BadRequest(CreateTransactionResponseDto.FailureResponse(errorMessage));
                 }
-                if (!_authenticationService.IsPartnerAllowed(request.PartnerKey, request.PartnerPassword)) {
-                    return Unauthorized(CreateTransactionResponseDto.FailureResponse("Access Denied!"));
+                if (!_authenticationService.IsPartnerAllowed(request.PartnerKey, request.PartnerPassword, out errorMessage)) {
+                    return Unauthorized(CreateTransactionResponseDto.FailureResponse(errorMessage));
                 }
                 if (request.Items != null && request.Items.Count > 0) {
                     if (!_transactionService.IsValidTotalAmount(request.Items, request.TotalAmount)) {

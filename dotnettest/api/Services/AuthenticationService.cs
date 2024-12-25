@@ -12,9 +12,17 @@ namespace api.Services
             { "FAKEPEOPLE", "FAKEPASSWORD4578" },
         };
 
-        public bool IsPartnerAllowed(string partnerKey, string partnerPassword)
+        public bool IsPartnerAllowed(string partnerKey, string partnerPassword, out string errorMessage)
         {
-            return _allowedPartners.GetValueOrDefault(partnerKey)?.Equals(Base64Encoder.Decode(partnerPassword)) ?? false;
+            errorMessage = "Access Denied!";
+            try {
+                return _allowedPartners.GetValueOrDefault(partnerKey)?.Equals(Base64Encoder.Decode(partnerPassword)) ?? false;
+            }
+            catch (Exception ex) {
+                errorMessage = "partnerpassword error: " + ex.Message;
+                return false;
+            }
+            
         }
 
         // Acutal signature does not match expected signature
