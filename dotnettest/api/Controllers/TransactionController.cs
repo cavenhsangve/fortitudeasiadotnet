@@ -30,6 +30,9 @@ namespace api.Controllers
                 if (!_authenticationService.IsPartnerAllowed(request.PartnerKey, request.PartnerPassword, out errorMessage)) {
                     return Unauthorized(CreateTransactionResponseDto.FailureResponse(errorMessage));
                 }
+                if(!_authenticationService.IsValidSignature(request)) {
+                    return Unauthorized(CreateTransactionResponseDto.FailureResponse("Access Denied!"));
+                }
                 if (request.Items != null && request.Items.Count > 0) {
                     if (!_transactionService.IsValidTotalAmount(request.Items, request.TotalAmount)) {
                         return BadRequest(CreateTransactionResponseDto.FailureResponse("Invalid Total Amount."));

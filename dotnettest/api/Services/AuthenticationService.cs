@@ -25,9 +25,8 @@ namespace api.Services
             
         }
 
-        // Acutal signature does not match expected signature
         // Step 1: Concatenate request body
-        // Step 2: Compute Hash of concatenated string
+        // Step 2: Compute Hash of concatenated string (output Hex)
         // Step 3: Encode Hash
         public bool IsValidSignature(CreateTransactionRequestDto request)
         {
@@ -36,9 +35,7 @@ namespace api.Services
             }
 
             string concatenated = $"{parsedTimeStamp:yyyyMMddHHmmss}{request.PartnerKey}{request.PartnerRefNo}{request.TotalAmount}{request.PartnerPassword}";
-            string calculatedSig = HashUtil.ComputeSHA256(concatenated);
-            Console.WriteLine(calculatedSig);
-            Console.WriteLine(concatenated);
+            string calculatedSig = HashUtil.ComputeSHA256Digest(concatenated);
 
             return calculatedSig.Equals(request.Sig);
         }
