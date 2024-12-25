@@ -30,6 +30,10 @@ namespace api.Controllers
                 }
             }
 
+            if (!_transactionService.IsValidTimestamp(request.TimeStamp, out string errorMessage)) {
+                return BadRequest(CreateTransactionResponseDto.FailureResponse(errorMessage));
+            }
+
             if (!_transactionService.ValidateTransaction(request)) {
                 return BadRequest(CreateTransactionResponseDto.FailureResponse("Bad Request!"));
             }

@@ -34,8 +34,8 @@ namespace api.Services
                 }
             }
 
-            if (!IsValidTimestamp(request.TimeStamp))
-                return false;
+            // if (!IsValidTimestamp(request.TimeStamp))
+            //     return false;
 
             return true;
         }
@@ -53,17 +53,36 @@ namespace api.Services
             return itemAmount == totalAmount;
         }
 
-        private bool IsValidTimestamp(string timestamp)
+        public bool IsValidTimestamp(string timestamp, out string errorMessage) 
         {
-            if (!timestamp.EndsWith("Z"))
-                return false;
+            errorMessage = string.Empty;
 
-            return DateTimeOffset.TryParseExact(
-                timestamp,
-                "yyyy-MM-ddTHH:mm:ss.fffffffZ",
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.AssumeUniversal,
-                out _);
+            if (!DateTime.TryParse(timestamp, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime providedTime))
+            {
+                errorMessage = "Invalid timestamp format. Must be ISO 8601.";
+                return false;
+            }
+
+            DateTime serverTime = DateTime.UtcNow;
+            Console.WriteLine(serverTime);
+
+            TimeSpan timeDifference = serverTime - providedTime;
+
+            if (Math.Abs(timeDifference.TotalMinutes) > 5) {
+                errorMessage = "Expired.";
+                return false;
+            }
+            return true;
         }
+
+        // private bool IsValidTimestamp(string timestamp)
+        // {
+        //     return DateTimeOffset.TryParseExact(
+        //         timestamp,
+        //         "yyyy-MM-ddTHH:mm:ss.fffffffZ",
+        //         CultureInfo.InvariantCulture,
+        //         DateTimeStyles.AssumeUniversal,
+        //         out _);
+        // }
     }
 }
