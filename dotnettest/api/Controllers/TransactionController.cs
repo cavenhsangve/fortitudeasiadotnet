@@ -1,5 +1,6 @@
 using api.Dtos.Transaction;
 using api.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -20,25 +21,28 @@ namespace api.Controllers
         [HttpPost]
         public IActionResult SubmitTransaction([FromBody]CreateTransactionRequestDto request) 
         {
-            if (!_authenticationService.IsPartnerAllowed(request.PartnerKey, request.PartnerPassword)) {
-                return Unauthorized(CreateTransactionResponseDto.FailureResponse("Access Denied!"));
-            }
-
-            if (request.Items != null && request.Items.Count > 0) {
-                if (!_transactionService.IsValidTotalAmount(request.Items, request.TotalAmount)) {
-                    return BadRequest(CreateTransactionResponseDto.FailureResponse("Invalid Total Amount."));
+            try {
+                string errorMessage = string.Empty;
+                if (!_transactionService.ValidateTransaction(request, out errorMessage)) {
+                    return BadRequest(CreateTransactionResponseDto.FailureResponse(errorMessage));
                 }
+                if (!_authenticationService.IsPartnerAllowed(request.PartnerKey, request.PartnerPassword)) {
+                    return Unauthorized(CreateTransactionResponseDto.FailureResponse("Access Denied!"));
+                }
+                if (request.Items != null && request.Items.Count > 0) {
+                    if (!_transactionService.IsValidTotalAmount(request.Items, request.TotalAmount)) {
+                        return BadRequest(CreateTransactionResponseDto.FailureResponse("Invalid Total Amount."));
+                    }
+                }
+                if (!_transactionService.IsValidTimestamp(request.TimeStamp, out errorMessage)) {
+                    return BadRequest(CreateTransactionResponseDto.FailureResponse(errorMessage));
+                }
+                return Ok(CreateTransactionResponseDto.SuccessResponse(request.TotalAmount, 0, request.TotalAmount));
+                } 
+            catch (Exception ex) 
+            {
+                return BadRequest(CreateTransactionResponseDto.FailureResponse(ex.Message));
             }
-
-            if (!_transactionService.IsValidTimestamp(request.TimeStamp, out string errorMessage)) {
-                return BadRequest(CreateTransactionResponseDto.FailureResponse(errorMessage));
-            }
-
-            if (!_transactionService.ValidateTransaction(request)) {
-                return BadRequest(CreateTransactionResponseDto.FailureResponse("Bad Request!"));
-            }
-
-            return Ok(CreateTransactionResponseDto.SuccessResponse(request.TotalAmount, 0, request.TotalAmount));
         }
     }
 }

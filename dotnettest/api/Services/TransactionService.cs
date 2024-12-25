@@ -8,29 +8,53 @@ namespace api.Services
 {
     public class TransactionService
     {
-        public bool ValidateTransaction(CreateTransactionRequestDto request)
+        public bool ValidateTransaction(CreateTransactionRequestDto request, out string errorMessage)
         {
-            if (string.IsNullOrEmpty(request.PartnerKey) 
-            || string.IsNullOrEmpty(request.PartnerPassword)
-            || string.IsNullOrEmpty(request.PartnerRefNo)
-            || string.IsNullOrEmpty(request.TimeStamp)
-            || string.IsNullOrEmpty(request.Sig)) 
-            {
+            errorMessage = string.Empty;
+            if (string.IsNullOrEmpty(request.PartnerKey)) {
+                errorMessage = "partnerkey is required.";
+                return false;
+            }
+            if (string.IsNullOrEmpty(request.PartnerPassword)) {
+                errorMessage = "partnerpassword is required.";
+                return false;
+            }
+            if (string.IsNullOrEmpty(request.PartnerRefNo)) {
+                errorMessage = "partnerrefno is required.";
+                return false;
+            }
+            if (string.IsNullOrEmpty(request.TimeStamp)) {
+                errorMessage = "timestamp is required.";
+                return false;
+            }
+            if (string.IsNullOrEmpty(request.Sig)) {
+                errorMessage = "sig is required.";
                 return false;
             }
 
-            if (request.TotalAmount <= 0)
+            if (request.TotalAmount <= 0) {
+                errorMessage = "Must be positive value.";
                 return false;
+            }
 
             if (request.Items != null)
             {
                 foreach (var item in request.Items)
                 {
-                    if (string.IsNullOrEmpty(item.PartnerItemRef) || string.IsNullOrEmpty(item.Name))
+                    if (string.IsNullOrEmpty(item.PartnerItemRef)) {
+                        errorMessage = "partneritemref is required.";
                         return false;
+                    }
 
-                    if (item.Qty < 1 || item.Qty > 5 || item.UnitPrice <= 0)
+                    if (string.IsNullOrEmpty(item.Name)){
+                        errorMessage = "Item name is required.";
                         return false;
+                    }
+
+                    if (item.Qty < 1 || item.Qty > 5 || item.UnitPrice <= 0) {
+                        errorMessage = "Item Quantity must be more than 1 or less than 6.";
+                        return false;
+                    }
                 }
             }
 
