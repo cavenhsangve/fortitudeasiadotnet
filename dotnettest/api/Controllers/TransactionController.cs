@@ -23,6 +23,7 @@ namespace api.Controllers
         {
             try {
                 string errorMessage = string.Empty;
+                long discount, finalAmount;
                 if (!_transactionService.ValidateTransaction(request, out errorMessage)) {
                     return BadRequest(CreateTransactionResponseDto.FailureResponse(errorMessage));
                 }
@@ -37,8 +38,9 @@ namespace api.Controllers
                 if (!_transactionService.IsValidTimestamp(request.TimeStamp, out errorMessage)) {
                     return BadRequest(CreateTransactionResponseDto.FailureResponse(errorMessage));
                 }
-                return Ok(CreateTransactionResponseDto.SuccessResponse(request.TotalAmount, 0, request.TotalAmount));
-                } 
+                (discount, finalAmount) = _transactionService.CalculateDiscount(request.TotalAmount);
+                return Ok(CreateTransactionResponseDto.SuccessResponse(request.TotalAmount, discount, finalAmount));
+                }
             catch (Exception ex) 
             {
                 return BadRequest(CreateTransactionResponseDto.FailureResponse(ex.Message));

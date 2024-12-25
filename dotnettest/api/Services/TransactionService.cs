@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.ConstrainedExecution;
 using api.Dtos.Transaction;
 using api.Models;
 using api.Utils;
@@ -57,10 +58,6 @@ namespace api.Services
                     }
                 }
             }
-
-            // if (!IsValidTimestamp(request.TimeStamp))
-            //     return false;
-
             return true;
         }
 
@@ -99,14 +96,57 @@ namespace api.Services
             return true;
         }
 
-        // private bool IsValidTimestamp(string timestamp)
-        // {
-        //     return DateTimeOffset.TryParseExact(
-        //         timestamp,
-        //         "yyyy-MM-ddTHH:mm:ss.fffffffZ",
-        //         CultureInfo.InvariantCulture,
-        //         DateTimeStyles.AssumeUniversal,
-        //         out _);
-        // }
+        public (long,long) CalculateDiscount(long totalAmount) 
+        {
+            long discount = 0, finalAmount=totalAmount;
+            // Calculate base
+            if (totalAmount < 20000) {
+                discount = 0;
+            }
+            else if (totalAmount >= 20000 && totalAmount <= 50099)
+            {
+                discount = 5;
+            } 
+            else if (totalAmount > 50099 && totalAmount <= 80099) 
+            {
+                discount = 7;
+            } 
+            else if (totalAmount > 80099 && totalAmount <= 120099)
+            {
+                discount = 10;
+            }
+            else
+            {
+                discount = 15;
+            }
+
+            // Calculate conditional
+            if (totalAmount > 50000 && PrimeUtil.IsPrime((int)totalAmount)) {
+                discount += 8;
+            }
+            if (totalAmount > 90000 && GetEffectiveLastDigit(totalAmount) == 5) {
+                discount += 10;
+            }
+
+            // Calculate discount exceeds 20%
+            if (discount > 20)
+                discount = 20;
+
+            if (discount > 0) {
+                finalAmount = (long)(totalAmount * ((double)(100-discount)/100));
+            }
+            return (discount, finalAmount);
+        }
+
+        private long GetEffectiveLastDigit(long number) {
+            while (number > 0) 
+            {
+                long lastDigit = number % 10;
+                if (lastDigit != 0) 
+                    return lastDigit;
+                number /= 10;
+            }
+            return 0;
+        }
     }
 }
