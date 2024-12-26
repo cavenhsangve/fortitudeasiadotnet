@@ -1,4 +1,5 @@
 using api.Services;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddControllers()
     });
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<TransactionService>();
+builder.Logging.AddLog4Net(log4NetConfigFile: "log4net.config");
 
 var app = builder.Build();
 
